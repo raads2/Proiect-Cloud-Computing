@@ -24,6 +24,10 @@ Dezvoltarea unei aplicații mobile pentru promovarea turismului în București
 
 Student: Tîrhoacă Radu
 Grupa 1152, SIMPRE
+Git: https://github.com/raads2/Proiect-Cloud-Computing.git
+Youtube: https://youtu.be/t8jCNThV0Q4
+
+
 
  
 Table of Contents
