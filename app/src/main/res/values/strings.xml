@@ -1,0 +1,13 @@
+<resources>
+    <string name="welcome">Welcome</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="click_to_register">Click to Register</string>
+    <string name="logout">Logout</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to Login</string>
+    <string name="app_name">App Name</string>
+    <string name="passengers">Passengers</string>
+    <string name="search_bus">Search for Buses</string>
+</resources>
