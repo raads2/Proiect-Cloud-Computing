@@ -48,3 +48,6 @@ crashlytics.properties
 
 # Google Services (e.g. APIs or Firebase config)
 google-services.json
+
+*.properties
+.env
