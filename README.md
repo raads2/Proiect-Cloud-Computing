@@ -23,23 +23,22 @@ Dezvoltarea unei aplicații mobile pentru promovarea turismului în București
 
 
 Student: Tîrhoacă Radu
-SIMPRE
+Grupa 1152, SIMPRE
 
  
 Table of Contents
-Introducere	2
-Descriere problemă	2
-Documentația aplicației	3
-1.	Scopul Aplicației	3
-2.	Analiza Cerințelor	3
-2.1 Cerințe funcționale	3
-2.2 Cerințe nefuncționale	4
-3.	Arhitectura Aplicației	4
-4.	Rezultate și funcționalități	5
-Descriere API	10
-Flux de Date	11
+Introducere	3
+Descriere problemă	3
+1.	Scopul Aplicației	4
+2.	Analiza Cerințelor	4
+2.1 Cerințe funcționale	4
+2.2 Cerințe nefuncționale	5
+3.	Arhitectura Aplicației	5
+Descriere API	6
+Flux de Date	7
+Capturi Ecran Aplicație	9
 Concluzii	13
-Bibliografie	13
+Referințe	13
 
  
 Introducere
@@ -55,8 +54,6 @@ Aplicațiile acestui concept sunt multiple: de la „smart cities”, care urmă
 În contextul turismului, noțiunea de „smart tourism” integrează toate aceste dimensiuni, reprezentând un domeniu emergent caracterizat prin digitalizare, interactivitate și personalizarea experiențelor turistice. Literatură recentă evidențiază faptul că există o susținere instituțională puternică pentru dezvoltarea acestui tip de turism, în special în Asia, unde guvernele din China și Coreea de Sud investesc semnificativ în infrastructuri digitale dedicate (Hwang et al., 2015). În Europa, turismul inteligent este adesea o extensie a proiectelor de tip „smart city”, punând accent pe competitivitate, inovație și dezvoltarea de aplicații care utilizează date preexistente într-un mod inovator (Lamsfus et al., 2015; Boes et al., 2015a, b). În Australia, cercetările se concentrează pe guvernanță inteligentă și utilizarea datelor deschise.
 Consensul este că tehnologiile inteligente au un potențial transformator nu doar în plan economic, ci și la nivelul experienței turistice individuale, facilitând interacțiunea, personalizarea și sustenabilitatea serviciilor oferite.
 
-
-Documentația aplicației
 1.	Scopul Aplicației
 Aplicația mobilă propusă în această lucrare are ca scop principal promovarea turismului urban în București prin intermediul tehnologiei mobile. Proiectul urmărește să faciliteze accesul utilizatorilor – atât turiști români, cât și străini – la informații esențiale despre obiectivele turistice ale orașului, într-un mod interactiv, modern și accesibil.
 În contextul dezvoltării conceptului de smart tourism, aplicația își propune să răspundă nevoii tot mai mari de digitalizare a experienței turistice, combinând elemente de informare, personalizare și interacțiune. Prin funcționalități precum posibilitatea rezervării de tururi în oraș, marcarea locurilor favorite, explorarea vizuală a obiectivelor și posibilitatea de a interacționa cu un asistent virtual bazat pe inteligență artificială, utilizatorii sunt sprijiniți în luarea deciziilor și în planificarea vizitelor într-un mod eficient și plăcut.
@@ -86,9 +83,100 @@ Gestionarea listei de sarcini (task-uri) se realizează prin Firebase Firestore 
 •	Sincronizarea între mai multe dispozitive autentificate cu același cont.
 Integrarea cu API-ul OpenAI oferă aplicației o componentă conversațională, care permite utilizatorului să interacționeze cu un asistent virtual direct din interfața aplicației. Acest modul folosește modelul „gpt-3.5-turbo” pentru a procesa și răspunde la întrebările sau solicitările utilizatorului. Răspunsurile sunt obținute în urma trimiterii unui mesaj printr-un request HTTP POST către endpoint-ul oficial OpenAI, folosind biblioteca OkHttpClient. Cererea include istoricul conversației într-un format JSON, iar răspunsul este analizat și afișat dinamic în aplicație. Pentru a evita trimiterea de cereri simultane care ar putea afecta performanța sau limita API-ului, aplicația folosește un flag de tip boolean care blochează inițierea unui nou request până la finalizarea celui precedent. Acest mecanism asigură o interacțiune controlată și previne suprasolicitarea serverului sau blocarea interfeței aplicației.
 Așadar, aplicația oferă o experiență modernă și dinamică, specifică aplicațiilor mobile actuale, punând accent pe conectivitate, interactivitate și performanță în timp real.
-4.	Rezultate și funcționalități
+Descriere API
+API Autentificare
+POST /register
+Descriere: Creează un cont nou folosind Firebase Authentication.
+Input: email, parolă
+Output: Status de înregistrare (succes/eșec)
+Tehnologie: Firebase Authentication
+
+POST /login
+Descriere: Autentifică un utilizator existent.
+Input: email, parolă
+Output: Token Firebase (autentificare) sau eroare
+Tehnologie: Firebase Authentication
+
+To-Do List API (Realtime Cloud Database)
+GET /tasks
+Descriere: Returnează lista de sarcini sortate descrescător după timp.
+Output: Listă cu obiecte task {id, task, time, status}
+Tehnologie: Firebase Firestore + Live Snapshot Listener
+
+POST /tasks
+Descriere: Adaugă o sarcină nouă.
+Input: task, time, status
+Output: Confirmare adăugare
+Tehnologie: Firebase Firestore
+
+DELETE /tasks/{id}
+Descriere: Șterge o sarcină.
+Input: id
+Tehnologie: Firestore document deletion
+
+ChatGPT API
+POST /chat
+Descriere: Trimite un mesaj către ChatGPT și returnează un răspuns generat.
+Input: prompt (textul utilizatorului)
+Output: răspunsul AI
+Tehnologie: OpenAI API (gpt-3.5-turbo) cu OkHttpClient
+
+Flux de Date
+•	Autentificare utilizator:
+Utilizatorul trimite datele (email, parolă) către Firebase Authentication. Firebase validează și returnează un token de autentificare.
+•	Acces la resurse:
+Tokenul este folosit implicit în SDK-ul Firebase pentru acces la Firestore (task-uri) și autentificare.
+•	Operații CRUD:
+Cererile pentru task-uri și favorite sunt sincronizate între client și server/local.
+•	Chat OpenAI:
+Clientul trimite un prompt către OpenAI API, primește răspunsul și îl afișează.
+Exemple de Request/Response
+
+Autentificare Firebase
+•	POST /register
+{
+  "email": "user@example.com",
+  "password": "parola123"
+}
+{
+  "uid": "abc123xyz",
+  "email": "user@example.com"
+}
+Similar și pentru POST/login
+•	POST /tasks
+
+{ "task": "Plimbare", "time": "15:00", "status": 0 }
+{ "success": true, "message": "Task adăugat." }
+
+•	POST /chat
+{ "prompt": "Sugerează 3 locuri de vizitat în București" }
+{ "response": "Muzeul Național, Ateneul Român, Parcul Herăstrău." }
+
+Metode HTTP utilizate
+Metodă	Endpoint	Descriere
+POST	/register	Creare cont nou
+POST	/login	Autentificare
+GET	/tasks	Preluare task-uri
+POST	/tasks	Adăugare task
+DELETE	/tasks/{id}	Ștergere task
+POST	/chat	ChatGPT interogare
+
+Autentificare și autorizare servicii utilizate
+•	Firebase Authentication:
+o	Autentificare utilizator cu email și parolă
+o	Generare token ID Firebase pentru sesiuni
+o	Tokenul autoriză accesul la Firestore (task-uri) și alte servicii Firebase
+•	OpenAI API:
+o	Autentificare cu API key (inclusă în headerul HTTP Authorization: Bearer <API_KEY>)
+o	Permite accesul securizat la endpoint-ul de chat
+
+
+
+
+Capturi Ecran Aplicație
 În acest capitul al lucrării voi prezenta funcționalitățile fiecărei pagini ale aplicației. 
 Pagina de Login.
+
 
 
 
@@ -186,107 +274,11 @@ Pagina Sights to See
 
 	În această pagină, utilizatorul poate vedea atracțiile turistice din București și să le marcheze în cazul în care dorește să le viziteze. Pentru a răspunde la orice întrebări legate de itinerariu, atracție sau orice nelămurire am integrat ChatGPT ca să rezolve toate aceste probleme.
 
-Descriere API
-API Autentificare
-POST /register
-Descriere: Creează un cont nou folosind Firebase Authentication.
-Input: email, parolă
-Output: Status de înregistrare (succes/eșec)
-Tehnologie: Firebase Authentication
-
-POST /login
-Descriere: Autentifică un utilizator existent.
-Input: email, parolă
-Output: Token Firebase (autentificare) sau eroare
-Tehnologie: Firebase Authentication
-
-To-Do List API (Realtime Cloud Database)
-GET /tasks
-Descriere: Returnează lista de sarcini sortate descrescător după timp.
-Output: Listă cu obiecte task {id, task, time, status}
-Tehnologie: Firebase Firestore + Live Snapshot Listener
-
-POST /tasks
-Descriere: Adaugă o sarcină nouă.
-Input: task, time, status
-Output: Confirmare adăugare
-Tehnologie: Firebase Firestore
-
-DELETE /tasks/{id}
-Descriere: Șterge o sarcină.
-Input: id
-Tehnologie: Firestore document deletion
-
-ChatGPT API
-POST /chat
-Descriere: Trimite un mesaj către ChatGPT și returnează un răspuns generat.
-Input: prompt (textul utilizatorului)
-Output: răspunsul AI
-Tehnologie: OpenAI API (gpt-3.5-turbo) cu OkHttpClient
-
-Flux de Date
-•	Autentificare utilizator:
-Utilizatorul trimite datele (email, parolă) către Firebase Authentication. Firebase validează și returnează un token de autentificare.
-•	Acces la resurse:
-Tokenul este folosit implicit în SDK-ul Firebase pentru acces la Firestore (task-uri) și autentificare.
-•	Operații CRUD:
-Cererile pentru task-uri și favorite sunt sincronizate între client și server/local.
-•	Chat OpenAI:
-Clientul trimite un prompt către OpenAI API, primește răspunsul și îl afișează.
-Exemple de Request/Response
-
-Autentificare Firebase
-•	POST /register
-{
-  "email": "user@example.com",
-  "password": "parola123"
-}
-{
-  "uid": "abc123xyz",
-  "email": "user@example.com"
-}
-Similar și pentru POST/login
-•	POST /tasks
-
-{ "task": "Plimbare", "time": "15:00", "status": 0 }
-{ "success": true, "message": "Task adăugat." }
-
-•	POST /chat
-{ "prompt": "Sugerează 3 locuri de vizitat în București" }
-{ "response": "Muzeul Național, Ateneul Român, Parcul Herăstrău." }
-
-Metode HTTP utilizate
-Metodă	Endpoint	Descriere
-POST	/register	Creare cont nou
-POST	/login	Autentificare
-GET	/tasks	Preluare task-uri
-POST	/tasks	Adăugare task
-DELETE	/tasks/{id}	Ștergere task
-POST	/chat	ChatGPT interogare
-
-Autentificare și autorizare servicii utilizate
-•	Firebase Authentication:
-o	Autentificare utilizator cu email și parolă
-o	Generare token ID Firebase pentru sesiuni
-o	Tokenul autoriză accesul la Firestore (task-uri) și alte servicii Firebase
-•	OpenAI API:
-o	Autentificare cu API key (inclusă în headerul HTTP Authorization: Bearer <API_KEY>)
-o	Permite accesul securizat la endpoint-ul de chat
 
 Concluzii
 Lucrarea de față a urmărit dezvoltarea unei aplicații mobile menite să promoveze turismul în București, integrând concepte moderne precum turismul smart și tehnologii actuale precum Firebase și API-ul OpenAI. Analiza literaturii de specialitate a evidențiat importanța digitalizării în experiența turistică, iar partea practică a demonstrat modul în care o aplicație mobilă poate contribui la creșterea vizibilității destinațiilor locale.
 
-Bibliografie
+Referințe
 Gretzel, U., Sigala, M., Xiang, Z. et al. Smart tourism: foundations and developments. Electron Markets 25, 179–188 (2015). https://doi.org/10.1007/s12525-015-0196-8
 
-
-
-
-
-
-
-
-
-
-
-![image](https://github.com/user-attachments/assets/37d5e1e6-2cb2-4756-8872-ca9060fd9cec)
+![image](https://github.com/user-attachments/assets/c7997acf-7f3c-4578-8046-e8e3d69c7797)
